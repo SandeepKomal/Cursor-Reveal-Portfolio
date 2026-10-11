@@ -16,13 +16,11 @@ A one-page portfolio for Sandeep Komal Pothu (cloud, DevOps and DevSecOps). The 
 ## Effects
 
 - **Cursor reveal:** a wobbly blob follows the cursor and unmasks the face behind the helmet.
-- **Scroll unmask:** scrolling past the hero opens the visor and reveals the whole face.
-- **Text scramble:** the headline boots up from terminal characters, and replays on hover.
-- **Custom cursor:** a trailing ring that grows on links and shows "VIEW ↗" on project cards (mouse only).
 - **Pipeline run:** stages tick to ✓ one by one as you scroll through the stack.
-- **3D tilt:** project cards tilt toward the cursor with a soft glare.
+- **Card tilt:** project cards lean slightly toward the cursor with a soft glare (mouse only).
+- **Calm load:** the hero text fades in once the fonts are ready, so nothing jumps.
 
-All effects switch off for visitors who prefer reduced motion, and the cursor and tilt are skipped on touch screens.
+All motion switches off for visitors who prefer reduced motion.
 
 ## How it works
 

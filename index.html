@@ -8,7 +8,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script>document.documentElement.classList.add('js');</script>
+<script>
+  // Hide the hero copy until the web fonts are in, so the headline never re-wraps.
+  (function (d) {
+    d.classList.add('js');
+    function ready() { d.classList.add('fonts'); }
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(ready); setTimeout(ready, 1500); } else ready();
+  })(document.documentElement);
+</script>
 <style>
   /* Concept: "unmasked". The hero shows a helmet (the system); the cursor reveals the
      engineer behind it. The rest of the page reads like a delivery pipeline. */
@@ -168,22 +175,6 @@
     background: radial-gradient(260px circle at var(--mx) var(--my), rgba(255,255,255,0.22), transparent 60%); mix-blend-mode: soft-light; }
   .card:hover::after { opacity: 1; }
 
-  /* custom cursor (fine pointers only, added by JS) */
-  .cursor { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%;
-    border: 1.5px solid var(--accent); display: grid; place-items: center; opacity: 0;
-    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--accent-ink);
-    transition: width .3s var(--ease), height .3s var(--ease), margin .3s var(--ease), background .3s, opacity .3s, border-color .3s; }
-  .cursor.on { opacity: 1; }
-  .cursor.link { width: 54px; height: 54px; margin: -27px 0 0 -27px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
-  .cursor.view { width: 84px; height: 84px; margin: -42px 0 0 -42px; background: var(--accent); border-color: var(--accent); }
-  .cursor.hide { opacity: 0; }
-  .cursor span { opacity: 0; transition: opacity .2s; }
-  .cursor.view span { opacity: 1; }
-  .cursor-dot { position: fixed; left: 0; top: 0; z-index: 51; pointer-events: none; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--accent); opacity: 0; transition: opacity .3s; }
-  .cursor-dot.on { opacity: 1; }
-
-  /* scrambled headline characters */
-  .scr { color: var(--muted); }
   .card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--muted); }
   .card-top .idx { color: var(--accent); }
   .card h3 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 0.95; letter-spacing: -0.03em; margin: 0; }
@@ -222,6 +213,9 @@
   footer { border-top: 1px solid var(--line); padding-block: 26px; color: var(--muted); }
   footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
+  .js .copy { opacity: 0; transform: translateY(12px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+  .js.fonts .copy { opacity: 1; transform: none; }
+
   /* reveal on scroll (only when JS runs) */
   .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
   .js .reveal.in { opacity: 1; transform: none; }
@@ -245,7 +239,7 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .status i, .marquee-track, .pipe-line::after { animation: none; }
-    .js .reveal { opacity: 1; transform: none; }
+    .js .reveal, .js .copy { opacity: 1; transform: none; }
     * { transition-duration: 0.01ms !important; }
   }
 </style>
@@ -272,7 +266,7 @@
       <div class="ghost" aria-hidden="true">SHIP</div>
       <div class="copy">
         <p class="eyebrow mono">Cloud · DevOps · DevSecOps</p>
-        <h1 aria-label="I build systems that run themselves."><span aria-hidden="true">I build systems that <em id="scramble">run themselves.</em></span></h1>
+        <h1>I build systems that <em>run themselves.</em></h1>
         <p class="lede">I'm Sandeep Komal Pothu. I automate the repeatable, secure the critical and keep an eye on the whole system, across AWS, Kubernetes, Terraform and CI/CD.</p>
         <div class="cta">
           <a class="pill mono" href="#contact">Let's connect <span class="dot" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h11M9 4l4 4-4 4"/></svg></span></a>
@@ -587,12 +581,7 @@
     ctx.clearRect(0, 0, W, H);
     if (baseImg) drawFit(ctx, baseImg, W, H);
 
-    // Scroll unmask: as the hero scrolls away, a widening opening shows the whole face.
-    var so = Math.min(Math.max(window.scrollY / (H / dpr * 0.55), 0), 1);
-    so = so * so * (3 - 2 * so);
-    if (so > 0.02) hint.classList.add('gone');
-
-    if ((r > 1.5 || so > 0.01) && revealImg) {
+    if (r > 1.5 && revealImg) {
       mctx.globalCompositeOperation = 'source-over';
       mctx.clearRect(0, 0, W, H);
       var blobs = [[lead, 1, 0], [tail[0], 0.74, 1.3], [tail[1], 0.52, 2.6], [tail[2], 0.34, 3.9]];
@@ -603,11 +592,6 @@
           blob(mctx, b[0].x, b[0].y, r * b[1] * s[0], t, b[2]);
           mctx.fill();
         });
-      });
-      if (so > 0.01) soft.forEach(function (s) {
-        mctx.fillStyle = 'rgba(0,0,0,' + s[1] + ')';
-        blob(mctx, W * 0.53, H * 0.56, so * W * 0.62 * s[0], t, 5.2);
-        mctx.fill();
       });
       mctx.globalCompositeOperation = 'source-in';
       drawFit(mctx, revealImg, W, H);
@@ -689,54 +673,6 @@
 
   var finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  // Headline: characters scramble like a terminal, then settle. Replays on hover.
-  var scr = document.getElementById('scramble'), finalText = scr.textContent, glyphs = '!-_/[]{}=+*^?#$%@01';
-  function scramble() {
-    if (reduce) return;
-    var start = performance.now(), dur = 1100;
-    (function tick(now) {
-      var p = Math.min((now - start) / dur, 1), html = '';
-      for (var i = 0; i < finalText.length; i++) {
-        var ch = finalText[i];
-        if (ch === ' ' || i / finalText.length < p * 1.15 - 0.15) html += ch;
-        else html += '<span class="scr">' + glyphs[Math.floor(Math.random() * glyphs.length)] + '</span>';
-      }
-      scr.innerHTML = html;
-      if (p < 1) requestAnimationFrame(tick); else scr.textContent = finalText;
-    })(start);
-  }
-  setTimeout(scramble, 250);
-  var h1 = scr.closest('h1'), scrBusy = 0;
-  h1.addEventListener('pointerenter', function () {
-    var now = Date.now(); if (now - scrBusy < 1400) return; scrBusy = now; scramble();
-  });
-
-  // Custom cursor: a ring that eases after the pointer, grows on links and says VIEW on project cards.
-  if (finePointer && !reduce) {
-    var ring = document.createElement('div'), dot = document.createElement('div');
-    ring.className = 'cursor'; ring.setAttribute('aria-hidden', 'true'); ring.innerHTML = '<span>VIEW ↗</span>';
-    dot.className = 'cursor-dot'; dot.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(ring); document.body.appendChild(dot);
-    var mx = -100, my = -100, rx = -100, ry = -100;
-    document.addEventListener('pointermove', function (e) {
-      if (e.pointerType !== 'mouse') return;
-      mx = e.clientX; my = e.clientY;
-      ring.classList.add('on'); dot.classList.add('on');
-      dot.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
-      var el = e.target;
-      var onCard = el.closest && el.closest('.card');
-      ring.classList.toggle('view', !!onCard);
-      ring.classList.toggle('link', !onCard && !!(el.closest && el.closest('a, button, .principle, .stagebox')));
-      ring.classList.toggle('hide', !!(el.closest && el.closest('.stage')));
-    });
-    document.addEventListener('pointerleave', function () { ring.classList.remove('on'); dot.classList.remove('on'); });
-    (function follow() {
-      rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
-      ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px)';
-      requestAnimationFrame(follow);
-    })();
-  }
-
   // Project cards: spotlight follows the cursor, plus a small "deploy history" chart.
   document.querySelectorAll('.card').forEach(function (card, ci) {
     card.addEventListener('pointermove', function (e) {
@@ -744,7 +680,7 @@
       card.style.setProperty('--mx', (e.clientX - b.left) + 'px');
       card.style.setProperty('--my', (e.clientY - b.top) + 'px');
       if (!finePointer || reduce) return;
-      var rxDeg = ((e.clientY - b.top) / b.height - 0.5) * -9, ryDeg = ((e.clientX - b.left) / b.width - 0.5) * 11;
+      var rxDeg = ((e.clientY - b.top) / b.height - 0.5) * -4, ryDeg = ((e.clientX - b.left) / b.width - 0.5) * 5;
       card.style.transition = 'transform .12s ease-out, border-color .3s, opacity .8s';
       card.style.transform = 'perspective(900px) rotateX(' + rxDeg.toFixed(2) + 'deg) rotateY(' + ryDeg.toFixed(2) + 'deg) translateY(-4px)';
     });
