@@ -18,7 +18,7 @@ A one-page portfolio for Sandeep Komal Pothu (cloud, DevOps and DevSecOps). The 
 - **Cursor reveal:** a wobbly blob follows the cursor and unmasks the face behind the helmet.
 - **Pipeline run:** stages tick to ✓ one by one as you scroll through the stack.
 - **Card tilt:** project cards lean slightly toward the cursor with a soft glare (mouse only).
-- **Calm load:** the hero text fades in once the fonts are ready, so nothing jumps.
+- **Headline rise:** each word slides up into place on load, then a soft light sweeps across "RUN THEMSELVES." (again on hover). The intro and buttons fade in after.
 
 All motion switches off for visitors who prefer reduced motion.
 
