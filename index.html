@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sandeep Komal Pothu · Cloud &amp; DevOps</title>
+<meta name="description" content="Sandeep Komal Pothu: cloud, DevOps and DevSecOps engineer building automated, secure and observable systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  /* Concept: "unmasked". The hero shows a helmet (the system); the cursor reveals the
+     engineer behind it. The rest of the page reads like a delivery pipeline. */
+  :root {
+    --bg: #f6f3f4;
+    --bg-2: #efe9ec;
+    --ink: #17121a;
+    --muted: #6b6270;
+    --accent: #e5195a;
+    --accent-ink: #ffffff;
+    --ghost: rgba(23, 18, 26, 0.06);
+    --line: rgba(23, 18, 26, 0.14);
+    --panel: #ffffff;
+    --term: #15101a;
+    --term-ink: #f4eef2;
+    --ok: #12a36b;
+    --font-display: "Bricolage Grotesque", "Arial Narrow", Arial, sans-serif;
+    --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2,.8,.2,1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f0b12; --bg-2: #150f19; --ink: #f4eef2; --muted: #a89fae; --accent: #ff3d7f; --accent-ink: #14060c;
+      --ghost: rgba(255, 255, 255, 0.05); --line: rgba(255, 255, 255, 0.14); --panel: #1a141e;
+      --term: #08060a; --ok: #3ddc97;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0b12; --bg-2: #150f19; --ink: #f4eef2; --muted: #a89fae; --accent: #ff3d7f; --accent-ink: #14060c;
+    --ghost: rgba(255, 255, 255, 0.05); --line: rgba(255, 255, 255, 0.14); --panel: #1a141e;
+    --term: #08060a; --ok: #3ddc97;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: 1240px; margin-inline: auto; padding-inline: 16px; position: relative; }
+  .mono { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+  /* ---- top bar ---------------------------------------------------------------- */
+  .bar-shell { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color .3s; }
+  .bar-shell.scrolled { border-color: var(--line); }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand::before { content: ""; width: 22px; height: 2px; background: var(--accent); }
+  .nav { display: flex; align-items: center; gap: 22px; }
+  .nav a { text-decoration: none; color: var(--muted); transition: color .2s; }
+  .nav a:hover { color: var(--accent); }
+  .status { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+  .status i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 var(--ok); animation: ping 2.4s ease-out infinite; }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent); } 80%, 100% { box-shadow: 0 0 0 8px transparent; } }
+
+  /* ---- hero --------------------------------------------------------------------- */
+  .hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: center; gap: clamp(8px, 3vw, 48px); padding-block: clamp(16px, 4vw, 48px) clamp(40px, 6vw, 80px); }
+  .ghost {
+    position: absolute; left: -1vw; top: 4%; z-index: 0; pointer-events: none; user-select: none;
+    font-family: var(--font-display); font-weight: 800; letter-spacing: -0.05em; line-height: 0.8;
+    font-size: clamp(6rem, 23vw, 21rem); color: var(--ghost); white-space: nowrap;
+  }
+  .copy { position: relative; z-index: 2; min-width: 0; }
+  .eyebrow { color: var(--muted); margin: 0 0 22px; }
+  h1, h2 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: -0.035em; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2.4rem, 6.2vw, 5.4rem); line-height: 0.94; }
+  h1 em, h2 em { font-style: normal; color: var(--accent); }
+  h1 em { display: block; }
+  .lede { max-width: 48ch; margin: 26px 0 34px; color: var(--muted); font-size: 1.04rem; }
+  .cta { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 18px; padding: 8px 8px 8px 26px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--panel); text-decoration: none;
+    transition: border-color .25s, transform .25s, box-shadow .25s;
+  }
+  .pill .dot { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; transition: transform .35s var(--ease); }
+  .pill:hover { border-color: var(--accent); box-shadow: 0 10px 30px -12px var(--accent); transform: translateY(-2px); }
+  .pill:hover .dot { transform: rotate(-45deg) scale(1.06); }
+
+  .link { text-decoration: none; position: relative; padding-block: 6px; }
+  .link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--accent); transform: scaleX(0.28); transform-origin: left; transition: transform .35s var(--ease); }
+  .link:hover::after { transform: scaleX(1); }
+
+  .stage-col { position: relative; z-index: 1; display: flex; justify-content: center; min-width: 0; }
+  .stage { position: relative; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; cursor: crosshair; touch-action: pan-y; }
+  .stage::before { content: ""; position: absolute; inset: 10%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent), transparent 68%); filter: blur(20px); }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hint {
+    position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); white-space: nowrap;
+    font-size: 11px; background: var(--panel); border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; color: var(--muted);
+    transition: opacity .5s; pointer-events: none;
+  }
+  .hint.gone { opacity: 0; }
+
+  /* ---- marquee ------------------------------------------------------------------ */
+  .marquee { border-block: 1px solid var(--line); overflow: hidden; padding-block: 18px; background: var(--bg-2); }
+  .marquee-track { display: flex; width: max-content; animation: slide 38s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  .marquee ul { display: flex; gap: 0; margin: 0; padding: 0; list-style: none; }
+  .marquee li { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.3rem, 2.6vw, 2rem); text-transform: uppercase; letter-spacing: -0.02em; padding-inline: 22px; display: flex; align-items: center; gap: 44px; white-space: nowrap; }
+  .marquee li::after { content: "✦"; color: var(--accent); font-size: 0.6em; }
+  @keyframes slide { to { transform: translateX(-50%); } }
+
+  /* ---- sections ----------------------------------------------------------------- */
+  section { padding-block: clamp(64px, 9vw, 120px); }
+  .sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 48px; align-items: end; margin-bottom: clamp(32px, 5vw, 56px); }
+  .sec-head h2 { font-size: clamp(2rem, 4.6vw, 3.8rem); line-height: 0.96; }
+  .sec-head p { margin: 0; color: var(--muted); max-width: 52ch; }
+  .tag { display: inline-flex; align-items: center; gap: 10px; color: var(--accent); margin-bottom: 16px; }
+  .tag b { font-weight: 500; color: var(--muted); }
+
+  /* about */
+  .about-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 72px); align-items: start; }
+  .manifesto { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.4rem, 2.6vw, 2.1rem); line-height: 1.18; letter-spacing: -0.02em; margin: 0; text-wrap: pretty; }
+  .manifesto span { color: var(--muted); }
+  .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .principle { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px; transition: border-color .25s, transform .25s; }
+  .principle:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .principle .mono { color: var(--accent); font-size: 11px; }
+  .principle h3 { font-family: var(--font-display); font-size: 1.35rem; margin: 10px 0 4px; letter-spacing: -0.02em; }
+  .principle p { margin: 0; color: var(--muted); font-size: 0.94rem; }
+
+  /* pipeline */
+  .pipeline { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+  .pipe-line { position: absolute; left: 0; right: 0; top: 31px; height: 2px; background: var(--line); overflow: hidden; z-index: 0; }
+  .pipe-line::after { content: ""; position: absolute; top: 0; left: -20%; width: 20%; height: 100%; background: linear-gradient(90deg, transparent, var(--accent), transparent); animation: flow 3.6s linear infinite; }
+  @keyframes flow { to { left: 100%; } }
+  .stagebox { position: relative; z-index: 1; min-width: 0; }
+  .node { width: 64px; height: 64px; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; color: var(--muted); margin-bottom: 18px; transition: background .25s, color .25s, border-color .25s, box-shadow .25s; }
+  .stagebox:hover .node, .stagebox.lit .node { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); box-shadow: 0 10px 30px -10px var(--accent); }
+  .stagebox h3 { font-family: var(--font-display); font-size: 1.3rem; text-transform: uppercase; letter-spacing: -0.02em; margin: 0 0 4px; }
+  .stagebox .mono { color: var(--muted); font-size: 10.5px; display: block; margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .chips li { font-size: 0.82rem; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); }
+
+  /* projects */
+  .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .card {
+    --mx: 50%; --my: 50%;
+    position: relative; display: flex; flex-direction: column; gap: 14px; min-width: 0;
+    padding: clamp(22px, 3vw, 32px); border-radius: 24px; border: 1px solid var(--line); text-decoration: none;
+    background: radial-gradient(420px circle at var(--mx) var(--my), color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%), var(--panel);
+    transition: border-color .3s, transform .3s var(--ease);
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-4px); }
+  .card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--muted); }
+  .card-top .idx { color: var(--accent); }
+  .card h3 { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 0.95; letter-spacing: -0.03em; margin: 0; }
+  .card p { margin: 0; color: var(--muted); }
+  .bars { display: flex; align-items: flex-end; gap: 3px; height: 34px; margin-top: auto; padding-top: 8px; }
+  .bars i { flex: 1; background: var(--ok); opacity: 0.75; border-radius: 2px; min-height: 4px; }
+  .bars i.warn { background: var(--accent); }
+  .card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px dashed var(--line); padding-top: 14px; color: var(--muted); font-size: 11px; }
+  .card-foot .live { display: inline-flex; align-items: center; gap: 8px; }
+  .card-foot .live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+  .card-foot .go { color: var(--ink); transition: color .2s; }
+  .card:hover .card-foot .go { color: var(--accent); }
+
+  /* journey: git log */
+  .log { border-radius: 24px; background: var(--term); color: var(--term-ink); padding: clamp(22px, 4vw, 40px); font-family: var(--font-mono); font-size: 13.5px; overflow: hidden; }
+  .log-head { display: flex; gap: 8px; margin-bottom: 26px; }
+  .log-head i { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.18); }
+  .log-head i:first-child { background: var(--accent); }
+  .log-cmd { color: rgba(244,238,242,0.6); margin: 0 0 22px; }
+  .log-cmd b { color: var(--accent); font-weight: 500; }
+  .commit { position: relative; padding: 0 0 26px 30px; border-left: 2px solid rgba(255,255,255,0.14); margin-left: 6px; }
+  .commit:last-child { padding-bottom: 0; border-color: transparent; }
+  .commit::before { content: ""; position: absolute; left: -8px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--term); border: 2px solid var(--accent); }
+  .commit .meta { color: #f6c453; }
+  .commit .meta span { color: #7fd3ff; }
+  .commit h3 { font-family: var(--font-body); font-size: 1.15rem; font-weight: 600; margin: 6px 0 4px; color: #fff; }
+  .commit p { margin: 0; font-family: var(--font-body); font-size: 0.96rem; color: rgba(244,238,242,0.68); max-width: 70ch; }
+
+  /* contact */
+  .contact { text-align: center; }
+  .contact h2 { font-size: clamp(2.4rem, 8vw, 7rem); line-height: 0.9; margin-inline: auto; max-width: 14ch; }
+  .contact .lede { margin-inline: auto; }
+  .contact-actions { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .copy-btn { font: inherit; cursor: pointer; color: inherit; }
+  .socials { display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; margin-top: 44px; }
+  footer { border-top: 1px solid var(--line); padding-block: 26px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  /* reveal on scroll (only when JS runs) */
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 980px) {
+    .pipeline { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 36px; }
+    .pipe-line { display: none; }
+  }
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: minmax(0, 1fr); }
+    .stage-col { order: -1; }
+    .stage { max-width: 400px; }
+    .nav .hide-sm, .bar .status { display: none; }
+    .sec-head, .about-grid, .projects { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 520px) {
+    .nav { gap: 14px; }
+    .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .principles { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .status i, .marquee-track, .pipe-line::after { animation: none; }
+    .js .reveal { opacity: 1; transform: none; }
+    * { transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bar-shell" id="barShell">
+  <header class="wrap bar">
+    <a class="brand mono" href="#top">Sandeep Komal</a>
+    <nav class="nav mono" aria-label="Sections">
+      <a class="hide-sm" href="#about">About</a>
+      <a href="#stack">Stack</a>
+      <a href="#work">Work</a>
+      <a class="hide-sm" href="#journey">Journey</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <span class="status mono"><i></i>Open to roles</span>
+  </header>
+</div>
+
+<main id="top">
+  <div class="wrap">
+    <section class="hero" style="padding-top: clamp(16px, 4vw, 48px)">
+      <div class="ghost" aria-hidden="true">SHIP</div>
+      <div class="copy">
+        <p class="eyebrow mono">Cloud · DevOps · DevSecOps</p>
+        <h1>I build systems that <em>run themselves.</em></h1>
+        <p class="lede">I'm Sandeep Komal Pothu. I automate the repeatable, secure the critical and keep an eye on the whole system, across AWS, Kubernetes, Terraform and CI/CD.</p>
+        <div class="cta">
+          <a class="pill mono" href="#contact">Let's connect <span class="dot" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h11M9 4l4 4-4 4"/></svg></span></a>
+          <a class="link mono" href="#work">See the work</a>
+        </div>
+      </div>
+      <div class="stage-col">
+        <div class="stage" id="stage">
+          <canvas id="cv" role="img" aria-label="A racing-style helmet. Moving the cursor over it reveals Sandeep's face underneath."></canvas>
+          <div class="hint mono" id="hint">Move your cursor to unmask me</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="marquee" aria-label="Tools I work with">
+    <div class="marquee-track" id="marquee">
+      <ul>
+        <li>AWS</li><li>EKS</li><li>Terraform</li><li>Docker</li><li>Kubernetes</li><li>Helm</li><li>Ansible</li><li>Python</li><li>GitHub Actions</li><li>Jenkins</li><li>Harness</li>
+        <li>CodeQL</li><li>SonarQube</li><li>Trivy</li><li>Checkov</li><li>Kyverno</li><li>Falco</li><li>Prometheus</li><li>Grafana</li><li>Vault</li><li>Splunk</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section id="about">
+      <div class="tag mono reveal">01 <b>/ about</b></div>
+      <div class="about-grid">
+        <p class="manifesto reveal">Automate the repeatable. Secure the critical. Observe the whole system. <span>I enjoy turning messy infrastructure and delivery problems into engineering systems that are boring in the best way: predictable, repeatable and easy to trust.</span></p>
+        <div class="principles">
+          <div class="principle reveal"><span class="mono">Cloud</span><h3>AWS-first</h3><p>VPCs, IAM, EKS, ECS and RDS built as code, not by hand.</p></div>
+          <div class="principle reveal"><span class="mono">Platform</span><h3>Kubernetes</h3><p>Containers, Helm, RBAC, network policies and autoscaling.</p></div>
+          <div class="principle reveal"><span class="mono">Delivery</span><h3>CI/CD</h3><p>Pipelines in GitHub Actions, Jenkins and Harness that ship on every merge.</p></div>
+          <div class="principle reveal"><span class="mono">Security</span><h3>Shift-left</h3><p>Code, dependency, container and IaC scanning before anything reaches prod.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stack">
+      <div class="sec-head">
+        <div class="reveal"><div class="tag mono">02 <b>/ stack</b></div><h2>One pipeline, <em>end to end.</em></h2></div>
+        <p class="reveal">The tools I reach for, laid out the way a change actually travels: from a commit to something running, secured and watched in production.</p>
+      </div>
+      <div class="pipeline" id="pipeline">
+        <div class="pipe-line" aria-hidden="true"></div>
+        <div class="stagebox reveal"><div class="node">01</div><h3>Code</h3><span class="mono">Write &amp; automate</span><ul class="chips"><li>Python</li><li>Shell</li><li>Git</li></ul></div>
+        <div class="stagebox reveal"><div class="node">02</div><h3>Build</h3><span class="mono">Package &amp; test</span><ul class="chips"><li>GitHub Actions</li><li>Jenkins</li><li>Harness</li><li>Docker</li></ul></div>
+        <div class="stagebox reveal"><div class="node">03</div><h3>Scan</h3><span class="mono">Shift-left security</span><ul class="chips"><li>CodeQL</li><li>SonarQube</li><li>Trivy</li><li>Checkov</li><li>OWASP ZAP</li></ul></div>
+        <div class="stagebox reveal"><div class="node">04</div><h3>Provision</h3><span class="mono">Infra as code</span><ul class="chips"><li>Terraform</li><li>Ansible</li><li>AWS</li><li>Vault</li></ul></div>
+        <div class="stagebox reveal"><div class="node">05</div><h3>Run</h3><span class="mono">Orchestrate &amp; enforce</span><ul class="chips"><li>Kubernetes</li><li>EKS</li><li>Helm</li><li>Kyverno</li><li>Falco</li></ul></div>
+        <div class="stagebox reveal"><div class="node">06</div><h3>Observe</h3><span class="mono">Measure &amp; alert</span><ul class="chips"><li>Prometheus</li><li>Grafana</li><li>Alertmanager</li><li>Splunk</li></ul></div>
+      </div>
+    </section>
+
+    <section id="work">
+      <div class="sec-head">
+        <div class="reveal"><div class="tag mono">03 <b>/ work</b></div><h2>Things I've <em>shipped.</em></h2></div>
+        <p class="reveal">Hands-on projects across cloud-native platforms, security automation and developer tooling. Every one of them is on GitHub.</p>
+      </div>
+      <div class="projects">
+        <a class="card reveal" href="https://github.com/SandeepKomal/KOMORAPY_V4" target="_blank" rel="noopener">
+          <div class="card-top mono"><span class="idx">P/01</span><span>Cloud native</span></div>
+          <h3>KOMORA</h3>
+          <p>A cloud-native application platform combining Kubernetes deployment, policy enforcement, secrets management and CI/CD automation.</p>
+          <ul class="chips"><li>AWS</li><li>Kubernetes</li><li>Kyverno</li></ul>
+          <div class="bars" aria-hidden="true"></div>
+          <div class="card-foot mono"><span class="live">Deployed</span><span class="go">View repo ↗</span></div>
+        </a>
+        <a class="card reveal" href="https://github.com/SandeepKomal/DevSecOps" target="_blank" rel="noopener">
+          <div class="card-top mono"><span class="idx">P/02</span><span>Security</span></div>
+          <h3>DevSecOps</h3>
+          <p>Delivery workflows that bring code, dependency, container and deployment checks straight into CI/CD.</p>
+          <ul class="chips"><li>CodeQL</li><li>Trivy</li><li>GitHub Actions</li></ul>
+          <div class="bars" aria-hidden="true"></div>
+          <div class="card-foot mono"><span class="live">Passing</span><span class="go">View repo ↗</span></div>
+        </a>
+        <a class="card reveal" href="https://github.com/SandeepKomal/Git3D-Universe" target="_blank" rel="noopener">
+          <div class="card-top mono"><span class="idx">P/03</span><span>GitHub Action</span></div>
+          <h3>Git3D Universe</h3>
+          <p>A GitHub Action that turns developer activity into a distinctive 3D-style profile visualisation.</p>
+          <ul class="chips"><li>GitHub Actions</li><li>SVG</li><li>Automation</li></ul>
+          <div class="bars" aria-hidden="true"></div>
+          <div class="card-foot mono"><span class="live">Running</span><span class="go">View repo ↗</span></div>
+        </a>
+        <a class="card reveal" href="https://github.com/SandeepKomal/KIND-k8s" target="_blank" rel="noopener">
+          <div class="card-top mono"><span class="idx">P/04</span><span>Platform</span></div>
+          <h3>Kubernetes Labs</h3>
+          <p>Local clusters with kind for practising RBAC, network policies, HPA and StatefulSets, plus CKA command notes.</p>
+          <ul class="chips"><li>kind</li><li>Kubernetes</li><li>Helm</li></ul>
+          <div class="bars" aria-hidden="true"></div>
+          <div class="card-foot mono"><span class="live">Healthy</span><span class="go">View repo ↗</span></div>
+        </a>
+      </div>
+    </section>
+
+    <section id="journey">
+      <div class="sec-head">
+        <div class="reveal"><div class="tag mono">04 <b>/ journey</b></div><h2>The <em>commit history.</em></h2></div>
+        <p class="reveal">How I got here, told the way engineers tell everything: newest first.</p>
+      </div>
+      <div class="log reveal">
+        <div class="log-head" aria-hidden="true"><i></i><i></i><i></i></div>
+        <p class="log-cmd"><b>$</b> git log --oneline --graph sandeep/career</p>
+        <div class="commit">
+          <div class="meta">HEAD <span>(public)</span></div>
+          <h3>Open-source tooling &amp; technical writing</h3>
+          <p>Sharing experiments, reusable workflows and engineering lessons through GitHub projects and posts on Medium.</p>
+        </div>
+        <div class="commit">
+          <div class="meta">feat <span>(projects)</span></div>
+          <h3>DevOps → DevSecOps → Platform engineering</h3>
+          <p>Building hands-on projects around AWS, Kubernetes, CI/CD, security automation, infrastructure as code and observability.</p>
+        </div>
+        <div class="commit">
+          <div class="meta">init <span>(work)</span></div>
+          <h3>Application operations · Cloud &amp; automation</h3>
+          <p>Working across application operations, cloud platforms, automation, delivery workflows and production support.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="tag mono reveal">05 <b>/ contact</b></div>
+      <h2 class="reveal">Let's ship something <em>reliable.</em></h2>
+      <p class="lede reveal">Open to cloud, DevOps and platform roles, and always happy to talk pipelines, Kubernetes or security automation.</p>
+      <div class="contact-actions reveal">
+        <a class="pill mono" href="mailto:sandeepkomalp@gmail.com">sandeepkomalp@gmail.com <span class="dot" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h11M9 4l4 4-4 4"/></svg></span></a>
+        <button class="link mono copy-btn" id="copyEmail" type="button" style="background:none;border:0">Copy email</button>
+      </div>
+      <div class="socials mono reveal">
+        <a class="link" href="https://www.linkedin.com/in/sandeep-komal-pothu-ba4497283" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="link" href="https://github.com/SandeepKomal" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="link" href="https://sandeepkomalp.medium.com" target="_blank" rel="noopener">Medium ↗</a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap mono"><span>© <span id="yr">2026</span> Sandeep Komal Pothu</span><span>Hand-built · no frameworks</span></div>
+</footer>
+
+<script>
+(function () {
+  // ---- Edit these to change the portrait --------------------------------------
+  var CONFIG = {
+    revealSrc: 'avatar.png',  // revealed under the cursor (square PNG cut-out works best)
+    baseSrc: '',              // optional photo shown on top; empty = the helmet drawn below
+    fit: 1                    // how much of the stage the portrait fills
+  };
+  // ----------------------------------------------------------------------------
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var stage = document.getElementById('stage');
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+  var mask = document.createElement('canvas');
+  var mctx = mask.getContext('2d');
+  var hint = document.getElementById('hint');
+  if (window.matchMedia && window.matchMedia('(hover: none)').matches) hint.textContent = 'Touch to unmask me';
+
+  function accent() {
+    var v = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    return v || '#e5195a';
+  }
+
+  // ---- the helmet: drawn in code on the same 1000x1000 grid as avatar.png ------
+  // PAD leaves room around the 1000px grid so the glow is not clipped.
+  var PAD = 60;
+  function helmet() {
+    var S = 1000, c = document.createElement('canvas');
+    c.width = c.height = S + PAD * 2;
+    var g = c.getContext('2d'), pink = '#ff2f78';
+    g.translate(PAD, PAD);
+
+    function shell() {
+      g.beginPath();
+      g.ellipse(530, 470, 448, 450, 0, Math.PI, Math.PI * 2);
+      g.bezierCurveTo(978, 770, 890, 960, 705, 992);
+      g.lineTo(355, 992);
+      g.bezierCurveTo(170, 960, 82, 770, 82, 470);
+      g.closePath();
+    }
+    function visor() {
+      g.beginPath();
+      g.moveTo(140, 500);
+      g.quadraticCurveTo(530, 410, 920, 500);
+      g.lineTo(890, 680);
+      g.quadraticCurveTo(530, 745, 170, 680);
+      g.closePath();
+    }
+
+    // shell with glow
+    var sh = g.createLinearGradient(160, 40, 900, 990);
+    sh.addColorStop(0, '#3a3d52'); sh.addColorStop(0.55, '#16171f'); sh.addColorStop(1, '#07080c');
+    g.save(); g.shadowColor = pink; g.shadowBlur = 40; g.fillStyle = sh; shell(); g.fill(); g.restore();
+
+    g.save(); shell(); g.clip();
+    // racing stripes over the crown
+    g.fillStyle = pink; g.fillRect(497, 0, 66, 470);
+    g.fillStyle = 'rgba(255,255,255,0.85)'; g.fillRect(476, 0, 10, 460); g.fillRect(574, 0, 10, 460);
+    // side panel lines
+    g.strokeStyle = 'rgba(255,255,255,0.08)'; g.lineWidth = 3;
+    g.beginPath(); g.moveTo(120, 760); g.quadraticCurveTo(300, 560, 300, 260); g.stroke();
+    g.beginPath(); g.moveTo(940, 760); g.quadraticCurveTo(760, 560, 760, 260); g.stroke();
+    // top sheen
+    var hi = g.createRadialGradient(360, 170, 10, 360, 170, 380);
+    hi.addColorStop(0, 'rgba(255,255,255,0.32)'); hi.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = hi; g.fillRect(0, 0, S, S);
+    // chin vents
+    g.fillStyle = '#050508';
+    for (var i = 0; i < 6; i++) {
+      var x = 400 + i * 46;
+      g.beginPath(); g.moveTo(x, 815); g.lineTo(x + 26, 815); g.lineTo(x + 18, 905); g.lineTo(x - 8, 905); g.closePath(); g.fill();
+    }
+    g.fillStyle = pink; g.fillRect(380, 930, 300, 8);
+    g.restore();
+
+    // visor
+    var vz = g.createLinearGradient(0, 430, 0, 740);
+    vz.addColorStop(0, '#2a0b1d'); vz.addColorStop(0.5, '#120610'); vz.addColorStop(1, '#3d0c26');
+    g.fillStyle = vz; visor(); g.fill();
+    g.save(); visor(); g.clip();
+    // reflected "terminal" lines on the visor
+    g.globalAlpha = 0.55;
+    var rows = [[230, 520, 180], [430, 520, 90], [230, 556, 120], [370, 556, 210], [230, 592, 260], [520, 592, 70], [230, 628, 150]];
+    rows.forEach(function (r, k) { g.fillStyle = k % 3 === 1 ? '#ffffff' : pink; g.fillRect(r[0], r[1], r[2], 12); });
+    g.globalAlpha = 1;
+    var gl = g.createLinearGradient(560, 430, 860, 720);
+    gl.addColorStop(0, 'rgba(255,255,255,0.28)'); gl.addColorStop(0.4, 'rgba(255,255,255,0.04)'); gl.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gl; g.beginPath(); g.moveTo(640, 420); g.lineTo(780, 420); g.lineTo(600, 760); g.lineTo(460, 760); g.closePath(); g.fill();
+    g.restore();
+    g.save(); g.shadowColor = pink; g.shadowBlur = 24; g.strokeStyle = pink; g.lineWidth = 7; visor(); g.stroke(); g.restore();
+    // visor pivots
+    [[150, 600], [910, 600]].forEach(function (p) {
+      g.fillStyle = '#0b0b10'; g.beginPath(); g.arc(p[0], p[1], 34, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = pink; g.lineWidth = 5; g.stroke();
+    });
+    // decal
+    g.fillStyle = 'rgba(255,255,255,0.75)';
+    g.font = '600 34px "JetBrains Mono", monospace';
+    g.textAlign = 'center';
+    g.fillText('SK/OPS', 300, 360);
+    return c;
+  }
+
+  var revealImg = null, helmetCanvas = helmet(), baseImg = helmetCanvas;
+  function load(src, assign) {
+    if (!src) return;
+    var im = new Image();
+    im.onload = function () { assign(im); };
+    im.src = src;
+  }
+  load(CONFIG.revealSrc, function (im) { revealImg = im; });
+  load(CONFIG.baseSrc, function (im) { baseImg = im; });
+  // Redraw the helmet once the mono font is ready so the decal uses it.
+  if (document.fonts && document.fonts.ready && !CONFIG.baseSrc) document.fonts.ready.then(function () { helmetCanvas = baseImg = helmet(); });
+
+  // Both layers are fitted as if they had the helmet's padding, so they stay aligned.
+  function drawFit(g, s, W, H) {
+    var w = s.naturalWidth || s.width, h = s.naturalHeight || s.height;
+    var pad = s === helmetCanvas ? 0 : PAD * 2 * Math.max(w, h) / 1000;
+    var k = Math.min(W / (w + pad), H / (h + pad)) * CONFIG.fit, dw = w * k, dh = h * k;
+    g.drawImage(s, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  }
+
+  // ---- sizing ----------------------------------------------------------------
+  var W = 0, H = 0, dpr = 1, R = 0;
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = stage.getBoundingClientRect();
+    W = Math.max(1, Math.round(r.width * dpr)); H = Math.max(1, Math.round(r.height * dpr));
+    cv.width = mask.width = W; cv.height = mask.height = H;
+    R = W * 0.2;
+  }
+  resize();
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(stage); else window.addEventListener('resize', resize);
+
+  // ---- blob state --------------------------------------------------------------
+  var lead = { x: W * 0.5, y: H * 0.5 }, tail = [{ x: lead.x, y: lead.y }, { x: lead.x, y: lead.y }, { x: lead.x, y: lead.y }];
+  var tx = lead.x, ty = lead.y, r = 0, tr = 0, vx = 0, vy = 0, auto = true, resumeTimer = null, active = false, visible = true;
+
+  function blob(g, cx, cy, rad, t, seed) {
+    var n = 56, sp = Math.min(Math.hypot(vx, vy) / (30 * dpr), 0.7), ang = Math.atan2(vy, vx);
+    g.beginPath();
+    for (var i = 0; i <= n; i++) {
+      var a = i / n * Math.PI * 2;
+      var k = 1 + 0.15 * Math.sin(a * 3 + t * 1.7 + seed) + 0.09 * Math.sin(a * 5 - t * 2.3 + seed * 2) + 0.05 * Math.sin(a * 2 + t * 0.9);
+      k *= 1 + sp * 0.45 * Math.cos(a - ang);
+      var x = cx + Math.cos(a) * rad * k, y = cy + Math.sin(a) * rad * k;
+      if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+    }
+    g.closePath();
+  }
+
+  function frame(ms) {
+    requestAnimationFrame(frame);
+    if (!visible) return;
+    var t = reduce ? 0 : ms / 1000;
+    if (auto && !active) {
+      tx = W * (0.53 + 0.15 * Math.cos(t * 0.9));
+      ty = H * (0.55 + 0.12 * Math.sin(t * 1.3));
+      tr = R;
+    }
+    var px = lead.x, py = lead.y;
+    lead.x += (tx - lead.x) * 0.2; lead.y += (ty - lead.y) * 0.2;
+    vx = lead.x - px; vy = lead.y - py;
+    r += (tr - r) * 0.14;
+    var prev = lead;
+    for (var i = 0; i < tail.length; i++) { tail[i].x += (prev.x - tail[i].x) * 0.15; tail[i].y += (prev.y - tail[i].y) * 0.15; prev = tail[i]; }
+
+    ctx.clearRect(0, 0, W, H);
+    if (baseImg) drawFit(ctx, baseImg, W, H);
+
+    if (r > 1.5 && revealImg) {
+      mctx.globalCompositeOperation = 'source-over';
+      mctx.clearRect(0, 0, W, H);
+      var blobs = [[lead, 1, 0], [tail[0], 0.74, 1.3], [tail[1], 0.52, 2.6], [tail[2], 0.34, 3.9]];
+      var soft = [[1.12, 0.22], [1.06, 0.3], [1.0, 0.5], [0.94, 1]];
+      blobs.forEach(function (b) {
+        soft.forEach(function (s) {
+          mctx.fillStyle = 'rgba(0,0,0,' + s[1] + ')';
+          blob(mctx, b[0].x, b[0].y, r * b[1] * s[0], t, b[2]);
+          mctx.fill();
+        });
+      });
+      mctx.globalCompositeOperation = 'source-in';
+      drawFit(mctx, revealImg, W, H);
+      mctx.globalCompositeOperation = 'source-over';
+
+      ctx.save();
+      ctx.shadowColor = accent(); ctx.shadowBlur = 28 * dpr;
+      ctx.drawImage(mask, 0, 0);
+      ctx.restore();
+    }
+  }
+  requestAnimationFrame(frame);
+  // Pause the canvas work while the hero is off screen.
+  if (window.IntersectionObserver) new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(stage);
+
+  // ---- pointer ---------------------------------------------------------------
+  function toCanvas(e) {
+    var b = stage.getBoundingClientRect();
+    tx = (e.clientX - b.left) / b.width * W; ty = (e.clientY - b.top) / b.height * H;
+  }
+  function enter(e) {
+    active = true; auto = false; clearTimeout(resumeTimer);
+    toCanvas(e); tr = R; hint.classList.add('gone');
+  }
+  function leave() {
+    active = false; tr = 0;
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(function () { auto = true; }, 3000);
+  }
+  stage.addEventListener('pointerenter', enter);
+  stage.addEventListener('pointerdown', enter);
+  stage.addEventListener('pointermove', function (e) { if (!active) enter(e); toCanvas(e); });
+  stage.addEventListener('pointerleave', leave);
+  stage.addEventListener('pointerup', function (e) { if (e.pointerType !== 'mouse') leave(); });
+  stage.addEventListener('pointercancel', leave);
+
+  // ---- rest of the page --------------------------------------------------------
+  // Marquee: duplicate the list so the loop is seamless.
+  var track = document.getElementById('marquee');
+  var dup = track.firstElementChild.cloneNode(true); dup.setAttribute('aria-hidden', 'true'); track.appendChild(dup);
+
+  // Sticky bar border once scrolled.
+  var shell = document.getElementById('barShell');
+  function onScroll() { shell.classList.toggle('scrolled', window.scrollY > 8); }
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // Fade sections in as they arrive.
+  var items = document.querySelectorAll('.reveal');
+  if (window.IntersectionObserver && !reduce) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  // Pipeline: light the stages one after another, like a run in progress.
+  var stages = document.querySelectorAll('.stagebox'), step = 0;
+  if (!reduce) setInterval(function () {
+    stages.forEach(function (s, i) { s.classList.toggle('lit', i === step); });
+    step = (step + 1) % (stages.length + 2);
+  }, 900);
+
+  // Project cards: spotlight follows the cursor, plus a small "deploy history" chart.
+  document.querySelectorAll('.card').forEach(function (card, ci) {
+    card.addEventListener('pointermove', function (e) {
+      var b = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - b.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - b.top) + 'px');
+    });
+    var bars = card.querySelector('.bars'), seed = ci * 9301 + 49297;
+    for (var i = 0; i < 28; i++) {
+      seed = (seed * 9301 + 49297) % 233280;
+      var v = seed / 233280, el = document.createElement('i');
+      el.style.height = (30 + v * 70) + '%';
+      if (v > 0.93) el.className = 'warn';
+      bars.appendChild(el);
+    }
+  });
+
+  // Copy email.
+  var copyBtn = document.getElementById('copyEmail');
+  copyBtn.addEventListener('click', function () {
+    var done = function () { copyBtn.textContent = 'Copied ✓'; setTimeout(function () { copyBtn.textContent = 'Copy email'; }, 1800); };
+    if (navigator.clipboard) navigator.clipboard.writeText('sandeepkomalp@gmail.com').then(done, function () {});
+  });
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
