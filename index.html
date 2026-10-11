@@ -156,10 +156,10 @@
     flex: 1 1 0; min-width: 0; height: clamp(28px, 4vw, 38px); border-radius: 8px; display: grid; place-items: center;
     background: var(--bg); border: 1px solid var(--line); box-shadow: 0 3px 0 var(--line);
     font-family: var(--font-mono); font-size: clamp(9px, 1.1vw, 11px); color: var(--muted); text-transform: uppercase; user-select: none;
-    transition: transform .07s, box-shadow .07s, background .2s, color .2s, border-color .2s;
+    transition: transform .18s var(--ease), box-shadow .18s, background .35s, color .35s, border-color .35s;
   }
   .key.w15 { flex-grow: 1.5; } .key.w6 { flex-grow: 6; }
-  .key.down { transform: translateY(3px); box-shadow: 0 0 0 var(--line), 0 0 22px -4px var(--accent); background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .key.down { transition-duration: .08s; transform: translateY(3px); box-shadow: 0 0 0 var(--line), 0 0 22px -4px var(--accent); background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
   .kbd-cap { display: flex; justify-content: space-between; margin-top: 16px; color: var(--muted); font-size: 10.5px; }
   .kbd-cap b { color: var(--accent); font-weight: 500; }
   .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -733,7 +733,7 @@
   });
   function press(k, ms) {
     var el = keys[k]; if (!el) return;
-    el.classList.add('down'); setTimeout(function () { el.classList.remove('down'); }, ms || 90);
+    el.classList.add('down'); setTimeout(function () { el.classList.remove('down'); }, ms || 150);
   }
 
   var man = document.getElementById('manifesto'), chars = [];
@@ -763,11 +763,12 @@
       sp.classList.add('on', 'cur'); prev = sp;
       if (c === ' ') press('space');
       else {
-        if (c !== c.toLowerCase()) press('shift', 120);
+        if (c !== c.toLowerCase()) press('shift', 200);
         press(c.toLowerCase());
       }
-      var wait = 16 + Math.random() * 26;
-      if (c === '.' || c === ':') wait += 260; else if (c === ',') wait += 120;
+      // Roughly human speed: a steady rhythm with small jitter and pauses at punctuation.
+      var wait = 48 + Math.random() * 34;
+      if (c === '.' || c === ':') wait += 380; else if (c === ',') wait += 180; else if (c === ' ') wait += 20;
       setTimeout(next, wait);
     })();
   }
